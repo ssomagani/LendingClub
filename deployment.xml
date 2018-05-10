@@ -1,0 +1,24 @@
+<deployment>
+   <cluster hostcount="1" sitesperhost="8"/>
+   <export>
+   <configuration target="loopback_AllocateLoan" type="custom" exportconnectorclass="org.voltdb.exportclient.loopback.LoopbackExportClient">
+           <property name="procedure">AllocateLoan</property>
+       </configuration>
+       <configuration target="loopback_OverflowLoan" type="custom" exportconnectorclass="org.voltdb.exportclient.loopback.LoopbackExportClient">
+           <property name="procedure">OVERFLOW_LOANS.insert</property>
+       </configuration>
+       </export>
+   <import>
+   		<!-- <configuration type="kafka" format="csv" enabled="true">
+   			<property name="brokers">34.208.70.0:9092,18.236.162.242:9092,52.40.88.139:9092</property>
+   			<property name="procedure">NewLoan</property>
+   			<property name="topics">LoanTraining</property>
+   		</configuration> 
+   		<configuration type="kafka" format="csv" enabled="true">
+   			<property name="brokers">34.208.70.0:9092,18.236.162.242:9092,52.40.88.139:9092</property>
+   			<property name="procedure">NewLoan</property>
+   			<property name="topics">LoanBig2017</property>
+   			<property name="groupid">volt_2b</property>
+   		</configuration> -->
+   </import>
+</deployment>

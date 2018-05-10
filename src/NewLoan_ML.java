@@ -1,0 +1,54 @@
+import java.util.Arrays;
+
+import org.voltdb.SQLStmt;
+import org.voltdb.VoltProcedure;
+import org.voltdb.VoltTable;
+
+public class NewLoan_ML extends VoltProcedure {
+
+	private static final SQLStmt INSERT = new SQLStmt("INSERT INTO NEW_LOANS VALUES("
+
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
+			+ ")");
+	private static final SQLStmt INSERT_STREAM = new SQLStmt("INSERT INTO LOAN_BY_RISK values (?, ?, ?)");
+	
+	private static Model model;
+	
+	public VoltTable[] run(int loan_id, String[] args) {
+
+		if(model == null)
+			 model = new Model();
+		
+		Arrays.stream(args).forEach(
+				(arg) -> {
+					System.out.println(arg);
+					if(arg == null)
+						arg = "0";
+				}
+				);
+		
+		double risk = model.makePrediction(args);
+		args[1] = Double.toString(risk);
+		
+		double loanAmt = Double.parseDouble(args[2]);
+		
+		voltQueueSQL(INSERT, (Object[]) args);
+		voltQueueSQL(INSERT_STREAM, risk, loan_id, loanAmt);
+		
+		return voltExecuteSQL(true);
+	}
+}
